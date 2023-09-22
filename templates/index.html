@@ -1,0 +1,101 @@
+<!-- Пример обновленного HTML-шаблона -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Мое веб-приложение</title>
+</head>
+<body>
+    <h1>Разделы</h1>
+    <h2>Добавить раздел</h2>
+    <form method="POST" action="/add_section">
+        <input type="text" name="section_name" placeholder="Имя раздела">
+        <button type="submit">Добавить раздел</button>
+    </form>
+    
+    <ul>
+        {% for section in sections %}
+        <li>
+            {{ section.name }}
+            
+            <form method="POST" action="/add_subsection/{{ section._id }}/subsection">
+                <input type="text" name="subsection_name" placeholder="Имя подсекции">
+                <button type="submit">Добавить подсекцию</button>
+            </form>
+            <form method="POST" action="/delete_section/{{ section._id|string }}">
+                <button type="submit">Удалить раздел</button>
+            </form>
+            <form method="POST" action="/edit_section/{{ section._id|string }}">
+                <input type="text" name="new_section_name" placeholder="Новое имя раздела">
+                <button type="submit">Изменить имя раздела</button>
+            </form>
+            <ul>
+                {% for subsection in section.subsections %}
+                <li>
+                    {{ subsection.name }}
+                    <!-- Форма для добавления характеристик -->
+                    <form method="POST" action="/add_characteristic/{{ section._id|string }}/{{ subsection._id|string }}">
+                        <input type="text" name="characteristic" placeholder="Характеристика">
+                        <button type="submit">Добавить характеристику</button>
+                    </form>
+                    
+                    <!-- Вывод характеристик для подсекции -->
+                    {% if subsection.characteristics %}
+                        <ul>
+                            {% for characteristic in subsection.characteristics %}
+                                <li>{{ characteristic }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    <!-- Вывод значения для отладки <p>section_id: {{ section._id|string }}</p><p>subsection_id: {{ subsection._id|string }}</p>-->
+                    <form method="POST" action="/add_description/{{ section._id|string }}/{{ subsection._id|string }}">
+                        <input type="text" name="description" placeholder="Описание">
+                        <button type="submit">Добавить описание</button>
+                    </form>
+                    
+                    <form method="POST" action="/add_rating/{{ section._id|string }}/{{ subsection._id|string }}">
+                        <select name="description_rating">
+                            <option value="very good">Very Good</option>
+                            <option value="good">Good</option>
+                            <option value="bad">Bad</option>
+                        </select>
+                        
+                        <button type="submit">Добавить рейтинг</button>
+                    </form>
+                    <form method="POST" action="/delete_subsection/{{ section._id|string }}/{{ subsection._id|string }}">
+                        <button type="submit">Удалить подраздел</button>
+                    </form>
+                    
+                    
+                    <ul>
+                        {% for description in subsection.descriptions %}
+                            <li>
+                                {{ description.text }}
+                                {% if description.rating %}
+                                    ({{ description.rating.rating }})
+                                {% endif %}
+                                <form method="POST" action="/delete_description/{{ section._id|string }}/{{ subsection._id|string }}/{{ description._id }}">
+                                    <button type="submit">Удалить описание</button>
+                                </form>
+                            </li>
+                        {% endfor %}
+                        {% for rating in subsection.ratings %}
+                            <li>
+                                {{ rating.rating }}
+                                <form method="POST" action="/delete_rating/{{ section._id|string }}/{{ subsection._id|string }}/{{ rating._id }}">
+                                    <button type="submit">Удалить рейтинг</button>
+                                </form>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    
+                    
+                </li>
+                {% endfor %}
+            </ul>
+            
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+
