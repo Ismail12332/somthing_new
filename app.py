@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def create_app():
+def create_app(*args, **kwargs):
     app = Flask(__name__, template_folder='templates')
     app.config['DEBUG'] = True 
     client = MongoClient(os.getenv("MONGODB_URI"))
